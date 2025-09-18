@@ -3,9 +3,9 @@ title: "Homework 2 Report"
 output: html_document
 ---
 
-## Name
+## Govind Rachapudi
 
-Please enter your name here.
+Govind Rachapudi
 
 ### Setup
 
