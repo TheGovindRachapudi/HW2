@@ -3,7 +3,6 @@ title: "Homework 2 Report"
 output: html_document
 ---
 
-
 ## Name
 
 Please enter your name here.
@@ -12,110 +11,140 @@ Please enter your name here.
 
 Read in the data with `read_csv()` and store the data as an R object named `dataset`. Check the data to make sure all of the expected observations and variables are there.
 
-
 ```{r}
-## Load the data and any necessary packages here.
+library(tidyverse)
+maac <- read.csv("C:\\Users\\User\\Desktop\\DATA product Class\\MAACS\\MAACS\\maacs.csv.gz")
 
 ```
 
 ## Part 1
 
-We will first consider the relationship between FEV1 and age. In general, it is expected that as children get older (and hence, larger in size), their FEV1 values should get higher. 
+We will first consider the relationship between FEV1 and age. In general, it is expected that as children get older (and hence, larger in size), their FEV1 values should get higher.
 
-Consider the statement "FEV1 values in children are higher in older children relative to younger children". 
+Consider the statement "FEV1 values in children are higher in older children relative to younger children".
 
-Write a function in R that takes the `dataset` object as an argument and returns `TRUE` if the statement above is true for the dataset and `FALSE` otherwise. 
+Write a function in R that takes the `dataset` object as an argument and returns `TRUE` if the statement above is true for the dataset and `FALSE` otherwise.
 
-NOTE: In order to write this function, you will need to translate the statement above into something that can be checked with the data. There are many ways in which you can do that translation correctly and you only need to pick one way here. 
+NOTE: In order to write this function, you will need to translate the statement above into something that can be checked with the data. There are many ways in which you can do that translation correctly and you only need to pick one way here.
 
 NOTE: For this part, do not use any plots.
 
 ```{r}
 ## Write your function here
+#View(maac)
 
+#fit a model using the data with linear model. 
+fev1_increase <- function(data){
+  maac_model <- lm(fev1 ~ age, data = maac)
+  slope <- coef(maac_model)[2]
+  return(slope > 0)
+}
+
+fev1_increase(maac)
 ```
 
+Therefore, I wrote a simple function to see whether the slope is increasing at a positive rate or not. If that is the case, then the function will output TRUE in which the given statement will be proven correct according to the data.
 
 ## Part 2
 
 Fit a linear regression model with FEV1 as the outcome and age as a predictor.
 
-How much does FEV1 change for a 1-year increase in the child's age? 
+How much does FEV1 change for a 1-year increase in the child's age?
 
 ```{r}
 ## Add your code here
+maac_model <- lm(fev1 ~ age, data = maac)
+maac_model$coefficients[2]
 
 ```
 
-
-Write your data analysis statement interpreting the regression model here:
-
-
+Write your data analysis statement interpreting the regression model here:\
+This simple linear model shows that the variable fev1 is increasing by .1712 per year on average.
 
 ## Part 3
 
-Develop **three** supporting premises derived from the data that support the statement you wrote in Part 2. These can be plots, other summary statistics, or model results. 
+Develop **three** supporting premises derived from the data that support the statement you wrote in Part 2. These can be plots, other summary statistics, or model results.
 
-NOTE: 
+NOTE:
 
-* At least one supporting premise should use a plot.
+-   At least one supporting premise should use a plot.
 
-* Do not use the code you write in Part 1 as a supporting premise
+-   Do not use the code you write in Part 1 as a supporting premise
 
-```{r}
-## Add your code here
+```{r, warning = FALSE}
+#scatterplot
+ggplot(data = maac, aes(x = age, y = fev1))+
+  geom_point(color = "blue", alpha = 0.8)+
+  theme_bw()
 
 ```
 
+```{r}
+#summary statistics of the model
+summary(maac_model)
+```
+
+```{r}
+#correlation coefficient
+cor.test(maac$age, maac$fev1)
+```
 
 Write the three supporting premise statements here:
 
-1. 
+1.   I created a scatterplot using ggplot to visualize the trend of the increase age with the correlation of fev1. The plot showed that as age increases fev1 also increases at significant rate.
 
-2. 
+2.  For the second supporting premise I used the summary statistics for the maac_model as evidence to support that as the age increases, fev1 increases by .171. This is very simple evidence that is used in order to make sure that there are other statistics supporting the claim.
 
-3. 
-
+3.  For the third and final supporting premise I used the correlation test function in R with age against fev1 to quantify whether there is a positive correlation between both of the variables or not. To no surprise, there is a significant positive correlation of .805 which indicates that the statement in the beginning of the assignment in indeed true.
 
 ## Part 4
 
-For each of the supporting premises above, write a function that takes the `dataset` object as an argument and returns `TRUE` if the supporting premise statement above is true for the dataset and `FALSE` otherwise. 
+For each of the supporting premises above, write a function that takes the `dataset` object as an argument and returns `TRUE` if the supporting premise statement above is true for the dataset and `FALSE` otherwise.
 
 For statements involving plots, instead of returning `TRUE` or `FALSE`, you function should do two things:
 
-1. Produce the plot that is used in the statement
+1.  Produce the plot that is used in the statement
 
-2. Produce a hypothetical version of the plot in the event that the statement is true. This can be done using simulated data or by simply hand drawing a plot.
+2.  Produce a hypothetical version of the plot in the event that the statement is true. This can be done using simulated data or by simply hand drawing a plot.
 
-
-```{r}
+```{r, warning=FALSE, message=FALSE}
 ## Function for supporting premise statement 1
+premise_1 <- function(data){
+  ggplot(data = data, aes(x = age, y = fev1))+
+  geom_point(color = "blue", alpha = 0.8)+
+  geom_smooth(method = "lm", se = TRUE, color = "coral", alpha = 0.67)+
+  theme_bw()
+}
+
+premise_1(maac)
 
 ```
-
 
 ```{r}
 ## Function for supporting premise statement 2
+premise_2 <- function(data){
+  another_model <- lm(fev1 ~ age, data=data)
+  summary(another_model)
+}
+premise_2(maac)
 
 ```
 
-
 ```{r}
 ## Function for supporting premise statement 3
+premise_3 <- function (data){
+  cor.test(data$age, data$fev1)
+}
 
+premise_3(maac)
 ```
 
 Execute each of your function and show that the produce the expected output.
 
-
-
-
 ## Part 5
 
-Describe one alternative to the primary statement "FEV1 values in children are higher in older children relative to younger children". 
+Describe one alternative to the primary statement "FEV1 values in children are higher in older children relative to younger children".
 
 Create a fault tree for the alternative outcome describing how the alternative outcome could be realized in the data even if the primary statement were true.
 
 Your fault tree should be created as a separate image and does not need to be created in R. Upload the image of the fault tree to Canvas.
-
-
