@@ -1,0 +1,5 @@
+"0","#scatterplot"
+"0","ggplot(data = maac, aes(x = age, y = fev1))+"
+"0","  geom_point(color = ""blue"", alpha = 0.8)+"
+"0","  theme_bw()"
+"0",""
